@@ -1,0 +1,14 @@
+{
+  "name": "CG-Assignment",
+  "description": "Twitter, node.js and mongodb example",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+  "async": "0.9.x",
+  "mongodb": "2.0.x",
+  "express": "4.0.0",
+  "mongoose":"3.6.x",
+  "twitter": "1.2.5"
+  }
+}
+
