@@ -12,23 +12,19 @@ var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://localhost:27017/twitter';
 
 var params = {
-		screen_name : 'nodejs',
-		trim_user : 'true',
-		truncated: true,
-		contributor_details:false,
-		exclude_replies: true
+		q : '@nodejs',
+		count: 100
 };
 
-// client.get('search/tweets', params, function(error, tweets, response) {
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-
+client.get('search/tweets', params, function(error, tweets, response) {
+	
 	MongoClient.connect(url, function(err, db) {
 		if (err) {
 			console.log('Error in connecting to database:', err);
 		} else {
 			var collection = db.collection('tweets');
 
-			collection.insert(tweets, function(err, result) {
+			collection.insert(tweets.statuses, function(err, result) {
 
 				if (err) {
 					console.log(err);
