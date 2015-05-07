@@ -12,12 +12,12 @@ var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://localhost:27017/twitter';
 
 var params = {
-		q : '@nodejs',
-		count: 100
+	q : '@nodejs',
+	count : 100
 };
 
 client.get('search/tweets', params, function(error, tweets, response) {
-	
+
 	MongoClient.connect(url, function(err, db) {
 		if (err) {
 			console.log('Error in connecting to database:', err);
@@ -28,7 +28,7 @@ client.get('search/tweets', params, function(error, tweets, response) {
 
 				if (err) {
 					console.log(err);
-				}else {
+				} else {
 					console.log('Tweets fetched');
 				}
 				db.close();
