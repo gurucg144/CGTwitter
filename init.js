@@ -1,9 +1,34 @@
 /*
  * Node program to fetch tweets nodejs for past one week.
+ * How to run the program
+ * Option 1 - node init.js 1 : 'To run for the first time or to perform clean run
+ * Option 2 - node init.js 2 : To refresh tweets for subsequent runs.
  */
+
+//TODO - Index on id field to be created to avoid duplicates. 
+//       Currentlty to be done manually in mongo shell using
+//       db.tweets.createIndex ({id: 1}, {unique: true})
+
 
 var twit = require('twitter');
 var mongodb = require('mongodb');
+
+//Read command line argument
+var mode = process.argv.slice(2)[0];
+
+if (mode == null) {
+	mode = 1;
+}else if (mode != 1 && mode != 2) {
+	console.log ('Usage :  init <options>');
+	console.log ('<options> :  1 (initial), 2 (refresh)');
+	process.exit(1);
+}
+
+if (mode == 1) {
+	console.log ('Initial run');
+}else {
+	console.log ('Refresh');
+}
 
 //Create Twitter Client with OAuth parameters.TODO- to be parameterized.
 var client = new twit({
@@ -56,12 +81,44 @@ function fetchTweets (p) {
 	client.get('search/tweets', p, handleTweetFetch);
 }
 
+
 //Callback function to connect to mongoDB
 function handleMongoConnect (err, db) {
 	globaldb = db;
 	collection = db.collection('tweets');
+	collection.remove();
 	console.log ('Fetching Tweets');
 	fetchTweets ({ q: '@nodejs', count: 100});
 }
+//Callback function to handle refresh.
+function fetchTweetOnce (p) {
+	client.get('search/tweets', p, function (error, tweets, response) {
+		collection.insert (tweets.statuses, function (error, result) {
+			console.log ('Refresh complete');
+			globaldb.close ();
+		});
+	});
+}
+
+function handleFindOne (error, doc) {
+	var since_id = doc.id;
+	
+	 var p2 = {q: '@nodejs', since_id: since_id, count: 100};
+	 fetchTweetOnce (p2);
+}
+function handleMongoConnectRefresh (err, db) {
+	globaldb = db;
+	collection = db.collection('tweets');
+	console.log ('Fetching Tweets');
+	var options = { "sort": [['id',-1]] };
+	collection.findOne ( {}, options, handleFindOne);
+	
+	fetchTweetOnce ({ q: '@nodejs', count: 100});
+}
 //connect to db before fetching Tweets.TODO - investiage if async moduel can be used.
-MongoClient.connect(url, handleMongoConnect);
+
+if (mode ==1) {
+	MongoClient.connect(url, handleMongoConnect);
+}else if (mode == 2){
+	MongoClient.connect(url, handleMongoConnectRefresh);
+}
