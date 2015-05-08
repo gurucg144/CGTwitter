@@ -58,12 +58,15 @@ bottomdate.setDate(bottomdate.getDate()-7);
 //callback function for database insert, also handles logic to fetch additional tweets.
 function handleInsert (error, result) {
 	
+	//Remove +0000 from the string before converting into date object.
 	var dt1 = new Date(mindate.replace('+0000', ''));
 
-	if (dt1 >= bottomdate) {				
+	//Check if date in the current fetch is >= bottom date
+	if (dt1 >= bottomdate) {
 		p1 = {q : '@nodejs', max_id : max_id, count : 100 };
 		fetchTweets (p1);
 	}else {
+		//All the tweets are fetched.
 		globaldb.close ();
 		console.log ('Fetch complete');
 	}
@@ -71,7 +74,6 @@ function handleInsert (error, result) {
 
 //Callback function to handle tweets, inserts data into db.
 function handleTweetFetch (error, tweets, response) {
-
 	max_id = tweets.statuses[tweets.statuses.length-1].id;
 	mindate = tweets.statuses[tweets.statuses.length-1].created_at;
 	collection.insert (tweets.statuses, handleInsert ());	
