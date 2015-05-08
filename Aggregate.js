@@ -25,8 +25,10 @@ MongoClient.connect(url, function(err, db) {
 	//Day of the week key.
 	var keyfDay = function(doc) {
 		var dt = new Date(doc.created_at.replace('+0000', ''));
+		var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 		return {
-			day_of_week : dt.getDay()
+			day_of_week : weekday[dt.getDay()]
 		};
 	};
 
@@ -35,15 +37,15 @@ MongoClient.connect(url, function(err, db) {
 		"count" : 0
 	}, function(obj, prev) {
 		prev.count++
+		
 	}, true, function(err, results) {
-		//Replace numeric value with day of the week.
-		//var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-		//results.day_of_week = weekdays[results.day_of_week];
+
 		console.log(results);
 		daycollection.insert(results);
 	});
 	
 	//Hour of day Key
+	
 	var keyfHour = function(doc) {
 		var dt = new Date(doc.created_at.replace('+0000', ''));
 		return {
@@ -56,7 +58,6 @@ MongoClient.connect(url, function(err, db) {
 	}, function(obj, prev) {
 		prev.count++
 	}, true, function(err, results) {
-		console.log(results);
 		hourcollection.insert(results);
 	});
 	//Need to add db.close ();
