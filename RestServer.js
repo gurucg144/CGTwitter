@@ -23,10 +23,14 @@ router.get('/', function(req, res) {
 router.route('/tweets/:type').get(function(req, res) {
 
 	var aggType;
+	var sortType;
+	
 	if (req.params.type == 'daily') {
 		aggType = 'day_aggregate'
+		sortType = 'day_of_week';
 	} else if (req.params.type == 'hourly') {
 		aggType = 'hour_aggregate';
+		sortType = 'hour_of_day';
 	}
 	console.log("aggType is " + aggType);
 
@@ -35,8 +39,8 @@ router.route('/tweets/:type').get(function(req, res) {
 			console.log('Error in connecting to database:', err);
 		} else {
 			var collection = db.collection(aggType);
-
-			collection.find().toArray(function(err, result) {
+			//not able to use variable sortType.
+			collection.find({},{_id:0}).sort({day_of_week:1, hour_of_day:1}).toArray(function(err, result) {
 				if (err)
 					res.send(err);
 				else
