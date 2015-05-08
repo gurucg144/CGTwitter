@@ -7,9 +7,9 @@ Pre-requisite
 
 Steps
 
-1. clone CGTwitter and 'cd CGTwitter'
+1. Clone CGTwitter and 'cd CGTwitter'
 2. Run 'npm update'
-3. start mongodb.
+3. Start mongodb.
 3. Run 'node init.js 1' - to fetch tweets
 4. Run 'node init.js 2' - to fetch new tweets
 5. Run 'node Aggregate.js' - to perform daily and hourly aggregation. 
