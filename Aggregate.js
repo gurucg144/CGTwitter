@@ -36,12 +36,11 @@ MongoClient.connect(url, function(err, db) {
 	collection.group(keyfDay, {}, {
 		"count" : 0
 	}, function(obj, prev) {
-		prev.count++
-		
+		prev.count++		
 	}, true, function(err, results) {
-
-		console.log(results);
-		daycollection.insert(results);
+		daycollection.insert(results, function (err, records) {
+			console.log ('Daily aggregation complete');
+		});
 	});
 	
 	//Hour of day Key
@@ -58,7 +57,11 @@ MongoClient.connect(url, function(err, db) {
 	}, function(obj, prev) {
 		prev.count++
 	}, true, function(err, results) {
-		hourcollection.insert(results);
+		hourcollection.insert(results, function (err, records) {
+			console.log ('Hourly aggregation complete');
+			db.close();
+		});
 	});
+	
 	//Need to add db.close ();
 });
