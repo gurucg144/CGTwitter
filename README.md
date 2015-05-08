@@ -1,8 +1,9 @@
-Node.js application which fetches tweets using twitter api for last 7 days, performs daily and hourly aggregation and provides them as Rest service.
+Node.js application to fetch tweets using twitter api for last 7 days, performs daily and hourly aggregation and provides them as Rest service.
 
 Pre-requisite
-1. MongoDB
-2. Node.js
+
+* MongoDB
+* Node.js
 
 Steps
 
