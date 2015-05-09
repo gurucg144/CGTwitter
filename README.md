@@ -18,10 +18,10 @@ Steps
 To access Rest service
 
 Daily aggregate
-http://localhost:8080/api/tweets/daily
+http://localhost:8080/api/tweets/aggregate?type=daily
 
 Hourly aggregate
-http://localhost:8080/api/tweets/hourly
+http://localhost:8080/api/tweets/aggregate?type=hourly
 
 Sample Output hourly aggregate 
 

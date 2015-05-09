@@ -20,20 +20,25 @@ router.get('/', function(req, res) {
 	});
 });
 
-router.route('/tweets/:type').get(function(req, res) {
+router.route('/tweets/aggregate').get(function(req, res) {
 
+	
 	var aggType;
 	var sortType;
 	
-	if (req.params.type == 'daily') {
+	var query = req.param('type');
+	
+	if (query == 'daily') {
 		aggType = 'day_aggregate'
 		sortType = 'day_of_week';
-	} else if (req.params.type == 'hourly') {
+	} else if (query == 'hourly') {
 		aggType = 'hour_aggregate';
 		sortType = 'hour_of_day';
+	} else {
+		res.status(404).send ('Not found');
+		return;
 	}
-	console.log("aggType is " + aggType);
-
+	
 	MongoClient.connect(url, function(err, db) {
 		if (err) {
 			console.log('Error in connecting to database:', err);
