@@ -4,16 +4,32 @@
  */
 
 var mongodb = require('mongodb');
+var events  = require ('events');
 
 var MongoClient = mongodb.MongoClient;
 
 var url = 'mongodb://localhost:27017/twitter';
+
+var EventEmitter = events.EventEmitter;
+
+var emitter = new EventEmitter();
+var count = 0;
+var globaldb;
+
+emitter.on("done", function() {
+	count++;
+	if (count > 1) {
+		globaldb.close ();
+	}
+});
+
 
 MongoClient.connect(url, function(err, db) {
 	if (err) {
 		console.log('Error connecting to db');
 		return;
 	}
+	globaldb = db;
 	var collection = db.collection('tweets');
 	var daycollection = db.collection('day_aggregate');
 	var hourcollection = db.collection('hour_aggregate');
@@ -40,6 +56,7 @@ MongoClient.connect(url, function(err, db) {
 	}, true, function(err, results) {
 		daycollection.insert(results, function (err, records) {
 			console.log ('Daily aggregation complete');
+			emitter.emit ("done");
 		});
 	});
 	
@@ -59,9 +76,7 @@ MongoClient.connect(url, function(err, db) {
 	}, true, function(err, results) {
 		hourcollection.insert(results, function (err, records) {
 			console.log ('Hourly aggregation complete');
-			db.close();
+			emitter.emit ("done");
 		});
 	});
-	
-	//Need to add db.close ();
 });
